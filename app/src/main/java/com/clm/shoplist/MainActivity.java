@@ -1,5 +1,7 @@
-package com.clm.shoplist;
+ package com.clm.shoplist;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,17 +15,53 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+import static android.content.SharedPreferences.*;
+
+ public class MainActivity extends AppCompatActivity {
     ArrayList<Product> productArrayList;
     ArrayAdapter<Product> arrayAdapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        final Editor editor = preferences.edit();
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         productArrayList= new ArrayList<>();
-        productArrayList.add (new Product("Milk",10));
+
+        String getPrefs=preferences.getString("list","Milk;10;false;");
+        String[] splitPrefs= getPrefs.split(";");
+        Product tempProduct=new Product("",0);
+        for(int i=0; i<splitPrefs.length;i++){
+            switch (i%3) {
+                case 0:
+                    tempProduct.setProductName(splitPrefs[i]);
+                    break;
+                case 1:
+                    int amount= Integer.parseInt(splitPrefs[i]);
+                    tempProduct.setProductAmmount(amount);
+                    break;
+                case 2:
+                    boolean isChosen=false;
+                    if (splitPrefs[i]=="true")
+                        isChosen=true;
+
+                    tempProduct.setChoose(isChosen);
+                    break;
+
+            }
+
+
+
+        }
+
+
+
+
         // create new adapter
         arrayAdapter =new productCustomArrayAdapter(this, R.layout.shop_list_item,productArrayList);
 
@@ -57,6 +95,22 @@ public class MainActivity extends AppCompatActivity {
                 productArrayList.remove(position);
                 arrayAdapter.notifyDataSetChanged();
                 return true;
+            }
+        });
+
+        Button saveBTN = (Button) findViewById(R.id.saveBTN);
+        saveBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String saveText="";
+                for (int i=0; i<productArrayList.size();i++){
+                    Product currentProduct= productArrayList.get(i);
+                    saveText+=currentProduct.getProductName()+";"+currentProduct.getProductAmmount()+";"+currentProduct.isChoose()+";";
+                }
+
+                editor.putString("list",saveText);
+                editor.commit();
+
             }
         });
 
