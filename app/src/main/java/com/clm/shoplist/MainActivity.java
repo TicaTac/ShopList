@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,20 +19,25 @@ import static android.content.SharedPreferences.*;
  public class MainActivity extends AppCompatActivity {
     ArrayList<Product> productArrayList;
     ArrayAdapter<Product> arrayAdapter;
+    SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+    final Editor editor = preferences.edit();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        final Editor editor = preferences.edit();
 
+        TextView debugTV = (TextView) findViewById(R.id.debugTV);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         productArrayList= new ArrayList<>();
 
-        String getPrefs=preferences.getString("list","Milk;10;false;");
+        String getPrefs=preferences.getString("list",null);
+        if (getPrefs==null){
+            getPrefs="Milk;10;false;";
+        }
+
         String[] splitPrefs= getPrefs.split(";");
         Product tempProduct=new Product("",0);
         for(int i=0; i<splitPrefs.length;i++){
@@ -41,6 +45,7 @@ import static android.content.SharedPreferences.*;
                 case 0:
                     tempProduct.setProductName(splitPrefs[i]);
                     break;
+
                 case 1:
                     int amount= Integer.parseInt(splitPrefs[i]);
                     tempProduct.setProductAmmount(amount);
@@ -54,10 +59,10 @@ import static android.content.SharedPreferences.*;
                     break;
 
             }
-
-
-
+            if (i>0 && i%3==0)
+                productArrayList.add(tempProduct);
         }
+
 
 
 
@@ -98,30 +103,36 @@ import static android.content.SharedPreferences.*;
             }
         });
 
-        Button saveBTN = (Button) findViewById(R.id.saveBTN);
+/*        Button saveBTN = (Button) findViewById(R.id.saveBTN);
         saveBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String saveText="";
                 for (int i=0; i<productArrayList.size();i++){
                     Product currentProduct= productArrayList.get(i);
-                    saveText+=currentProduct.getProductName()+";"+currentProduct.getProductAmmount()+";"+currentProduct.isChoose()+";";
+                    saveText+=currentProduct.getProductName()+";"+currentProduct.getProductAmmount()+";"+currentProduct.isChosen()+";";
                 }
 
                 editor.putString("list",saveText);
                 editor.commit();
 
             }
-        });
+        }); */
 
         // CB - on click - update product list
 
 
 
-
-
-
-
-
-    }
 }
+     @Override
+     protected void onPause() {
+         super.onPause();
+         String saveText="";
+         for (int i=0; i<productArrayList.size();i++){
+             Product currentProduct= productArrayList.get(i);
+             saveText+=currentProduct.getProductName()+";"+currentProduct.getProductAmmount()+";"+currentProduct.isChosen()+";";
+         }
+
+         editor.putString("list",saveText);
+         editor.commit();
+     }}

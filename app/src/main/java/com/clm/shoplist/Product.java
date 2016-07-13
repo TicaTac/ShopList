@@ -13,7 +13,7 @@ public class Product {
         this.productAmount = productAmount;
     }
 
-    public boolean isChoose() {
+    public boolean isChosen() {
 
         return choose;
     }

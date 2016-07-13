@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -40,6 +39,7 @@ public class productCustomArrayAdapter extends ArrayAdapter<Product> {
         amountTV.setText(""+currentProduct.getProductAmmount());
 
         CheckBox boughtCB=(CheckBox) v.findViewById(R.id.chooseCB);
+        boughtCB.setChecked(currentProduct.isChosen());
         boughtCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

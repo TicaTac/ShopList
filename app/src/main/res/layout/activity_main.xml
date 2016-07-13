@@ -64,13 +64,13 @@
                 android:id="@+id/insertBTN" />
         </LinearLayout>
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save"
-            android:id="@+id/saveBTN"
-            android:layout_gravity="right" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="_"
+            android:id="@+id/debugTV"
+            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 
